@@ -10,7 +10,11 @@
 
 使用Ubuntu 16.04  
 git clone https://github.com/EOSIO/eos --recursive  
+cd eos  
 git submodule update --init --recursive  
+./eosio_build.sh -s EOS  
+cd build
+make install
 
 如果本地主机或虚拟机内存、磁盘空间不够报错  
 可以通过修改脚本scripts/eosio_build_ubuntu.sh  
@@ -28,10 +32,7 @@ git submodule update --init --recursive
                 # exit 1
         fi
 ```
-cd eos  
-./eosio_build.sh -s EOS  
-cd build
-make install
+
 
 ## 头文件引用
 在make install的时候，会将用到的头文件复制到目录/usr/local/include下  
