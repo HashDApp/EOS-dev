@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <unistd.h>
 #include <iostream>
 #include <iomanip>
 
@@ -46,39 +47,73 @@ static uint64_t string_to_name( const char* str ) {
 
 void dump_name(const char *name, string type)
 {
-	cout << right << setw(13) << name << " : ";
-	if (type == "hex") {
-		cout << hex;
-	} else {
-		cout << dec;
-	}
+    cout << right << setw(13) << name << " : ";
+    if (type == "hex") {
+        cout << hex;
+    } else {
+        cout << dec;
+    }
 
-	cout << right << setw(20);
-	cout << string_to_name(name) << endl;
+    cout << right << setw(20);
+    cout << string_to_name(name) << endl;
 }
 
-int main()
+int test = 0;
+char *name = NULL;
+
+int main(int argc, char **argv)
 {
-    static const char* charmap = ".12345abcdefghijklmnopqrstuvwxyz";
-	cout << charmap << endl;
-    cout << "strlen(charmap): " << strlen(charmap) << endl;
+    int ch;
+    while ((ch = getopt(argc,argv,"n:t")) != -1) {
+        switch (ch) {
+        case 't': {
+            test = 1;
+            break;
+        }
+        case 'n': {
+            name = optarg;
+            break;
+        }
+        default: {
 
-    int i;
-    for (i = 0; i < strlen(charmap); i++) {
-		cout << hex << uint64_t(char_to_symbol(charmap[i])) << " ";
+            break;
+        }
+        }
     }
-	cout << endl;
 
-	dump_name("1", "");
-	dump_name("111111111111", "");
-	dump_name("zzzzzzzzzzzz", "");
+    if (test) {
+        static const char* charmap = ".12345abcdefghijklmnopqrstuvwxyz";
+        cout << charmap << endl;
+        cout << "strlen(charmap): " << strlen(charmap) << endl;
 
-	dump_name("zzzzzzzzzzzz", "hex");
-	dump_name("zzzzzzzzzzzzz", "hex");
-	dump_name("zzzzzzzzzzzzm", "hex");
-	dump_name("zzzzzzzzzzzz5", "hex");
-	dump_name("zzzzzzzzzzzzp", "hex");
+        int i;
+        for (i = 0; i < strlen(charmap); i++) {
+            cout << hex << uint64_t(char_to_symbol(charmap[i])) << " ";
+        }
+        cout << endl;
 
-	return 0;
+        for (i = 0; i < strlen(charmap); i++) {
+            char n[13];
+            int j;
+            for (j = 0; j < 12; j++) {
+                n[j] = charmap[i];
+            }
+            n[12] = 0;
+            dump_name(n, "");
+        }
+
+        dump_name("1", "");
+        dump_name("zzzzzzzzzzzz", "hex");
+        dump_name("zzzzzzzzzzzzz", "hex");
+        dump_name("zzzzzzzzzzzzm", "hex");
+        dump_name("zzzzzzzzzzzz5", "hex");
+        dump_name("zzzzzzzzzzzzp", "hex");
+    }
+
+    if (name) {
+        dump_name(name, "");
+    }
+
+    return 0;
 }
 
